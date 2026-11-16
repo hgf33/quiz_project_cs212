@@ -260,6 +260,46 @@ let quizes = [
         ]
     }
 ];
+
+//Section started by Riley
+const selectedType = new URLSearchParams(window.location.search).get("type");
+const selectedQuiz = quizes.findIndex(item => item.typeOfQuiz === selectedType);
+
+let questionIndex = 0;
+
+function startQuiz() {
+    questionIndex = 0;
+    correctAnswers = 0;
+    answers = [];
+
+    $(".quiz-result").prop("hidden", true);
+    $(".quiz").show();
+    printQuiz(selectedQuiz, questionIndex);
+}
+
+$(".restart").on("click", startQuiz);
+
+$(function () {
+    // Clicking a selection button opens the quiz page with its type in the URL.
+    $(".main-menu button").on("click", function () {
+        const type = findQuiz(this.className);
+        window.location.href = "quiz/index.html?type=" + encodeURIComponent(type);
+    });
+
+    // On the quiz page, use that type to show the first question.
+    if ($(".question").length) {
+        const type = new URLSearchParams(window.location.search).get("type");
+        const quizIndex = quizes.findIndex(item => item.typeOfQuiz === type);
+
+        if (quizIndex >= 0) {
+            printQuiz(quizIndex, 0);
+        } else {
+            window.location.href = "../index.html";
+        }
+    }
+});
+// Section end
+
 //declare Variables
 let quiz = '';
 let correctAnswers = 0;
@@ -330,6 +370,18 @@ function printQuiz(findQuiz, i) {
     }
 }
 
+// timer by Riley
+function timer(){
+    var sec = 300;
+    var timer = setInterval(function(){
+        document.getElementById('timer').innerHTML = sec;
+        sec--;
+        if (sec < 0) {
+            clearInterval(timer);
+            // add something to submit the quiz, may need to test.
+        }
+    }, 1000);
+}
 
 function checkForCorrectAnswers(findQuiz) {
     for (let i = 0; i < quizes[findQuiz].questions.length; i++) {
